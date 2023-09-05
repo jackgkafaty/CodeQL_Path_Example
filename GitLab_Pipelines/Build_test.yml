@@ -1,0 +1,12 @@
+image: node:18
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  resources:
+    cpu: 5000

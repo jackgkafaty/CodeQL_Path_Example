@@ -1,0 +1,51 @@
+name: Commiter Report
+#
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  count-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: npm install @actions/github @octokit/graphql
+      - name: Run commiter report
+        uses: actions/github-script@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          script: |
+            const { graphql } = require('@octokit/graphql');
+            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+
+            const org = 'octodemo';
+            const query = `{
+              search(query: "org:${org}", type: REPOSITORY, first: 100) {
+                repositoryCount
+                edges {
+                  node {
+                    ... on Repository {
+                      nameWithOwner
+                      object(expression: "main") {
+                        ... on Commit {
+                          history(since: "2023-01-10T00:00:00") {
+                            totalCount
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }`;
+            const response = await graphql(query, {
+              headers: {
+                authorization: `token ${process.env.GITHUB_TOKEN}`
+              }
+            });
+            const repositories = response.search.edges.map((edge) => ({
+              nameWithOwner: edge.node.nameWithOwner,
+              commitCount: edge.node.object.history.totalCount
+            }));
+            console.log(repositories);
