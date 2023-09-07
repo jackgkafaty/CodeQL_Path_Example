@@ -52,7 +52,7 @@ jobs:
         languages: ${{ matrix.language }}
         queries: security-extended
     # If you wish to specify a path you can do so using this config file.
-        config-file: $Path_to_Scan
+        config-file: ${{ env.Path_to_Scan }}
 
 
     # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
