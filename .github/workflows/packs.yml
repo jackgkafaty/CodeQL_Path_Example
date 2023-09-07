@@ -1,0 +1,49 @@
+
+name: "CodeQL Query pack"
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  Test:
+    name: Analyze
+    runs-on: 'ubuntu-latest'
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby', 'swift' ]
+        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby', 'swift' ]
+        # Use only 'java' to analyze code written in Java, Kotlin or both#
+        # Use only 'javascript' to analyze code written in JavaScript, TypeScript or both
+        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+
+    steps:
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+        queries: security-extended
+
+    - name: CodeQL Currently Support Rules 
+      run: |
+       codeql pack download codeql/go-queries && codeql resolve queries codeql/go-queries
+       codeql pack download codeql/cpp-queries && codeql resolve queries codeql/cpp-queries
+       codeql pack download codeql/csharp-queries && codeql resolve queries codeql/csharp-queries
+       codeql pack download codeql/java-queries && codeql resolve queries codeql/java-queries
+       codeql pack download codeql/javascript-queries && codeql resolve queries codeql/javascript-queries
+       codeql pack download codeql/python-queries && codeql resolve queries codeql/python-queries
+       codeql pack download codeql/ruby-queries && codeql resolve queries codeql/ruby-queries
+       codeql pack download codeql/swift-queries && codeql resolve queries codeql/swift-queries
+
+
+        
+
+
