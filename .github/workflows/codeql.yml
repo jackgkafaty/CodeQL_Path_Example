@@ -17,9 +17,11 @@ on:
   
   pull_request:
     branches: [ "main" ]
-    paths-ignore:
-     - /data/static/*
-     
+
+## Using an Env. variable as to define the path of the configuration file which contains the paths to scan.
+env:
+  Path_to_Scan: ./.github/codeql_config/codeql-config.yml
+   
 jobs:
   CodeQL_Code_Scanning:
     name: Analyze
@@ -50,7 +52,7 @@ jobs:
         languages: ${{ matrix.language }}
         queries: security-extended
     # If you wish to specify a path you can do so using this config file.
-        config-file: ./.github/codeql_config/codeql-config.yml
+        config-file: $Path_to_Scan
 
 
     # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
